@@ -3,7 +3,7 @@
 ## 3D Models
 
 ### Boulder Scene
-- Buffalo (Bison) by Poly by Google [CC-BY] via Poly Pizza
+- Bison by Poly by Google [CC-BY] via Poly Pizza
 - Graduation cap by Poly by Google [CC-BY] via Poly Pizza
 
 ### Albuquerque Scene
