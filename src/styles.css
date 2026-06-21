@@ -1,0 +1,151 @@
+/* ----- Reset & page ----- */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* Background gradient is set from the active theme in App.jsx; this is a
+     sensible Golden Hour fallback before JS runs. */
+  background: linear-gradient(180deg, #ffd9a0 0%, #ffb988 45%, #ffe6cf 100%);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  color: #2a1f16;
+}
+
+/* The R3F canvas — fixed full-viewport behind the overlays. */
+.scene-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: block;
+  z-index: 1;
+}
+
+/* Generates the scroll range that drives the experience. */
+.scroll-track {
+  height: 240vh;
+}
+
+/* ----- Intro hero ----- */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  color: #2a1f16;
+}
+.intro-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 18px;
+}
+.intro-name {
+  margin: 0;
+  font-size: clamp(48px, 9vw, 128px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-shadow: 0 6px 28px rgba(120, 60, 20, 0.18);
+}
+.intro-role {
+  margin-top: 16px;
+  font-size: clamp(16px, 2vw, 24px);
+  font-weight: 500;
+  opacity: 0.85;
+}
+.intro-hint {
+  position: absolute;
+  bottom: 7vh;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* ----- Info card ----- */
+.info-card {
+  position: fixed;
+  left: clamp(20px, 5vw, 72px);
+  bottom: 9vh;
+  z-index: 3;
+  width: min(430px, 86vw);
+  padding: 30px 32px;
+  opacity: 0;
+  transform: translateY(70px);
+  pointer-events: none;
+  background: rgba(255, 253, 248, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(120, 70, 40, 0.1);
+  border-radius: 22px;
+  box-shadow: 0 24px 60px -18px rgba(90, 50, 20, 0.4);
+  color: #2a1f16;
+}
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #c1654a;
+}
+.info-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c1654a;
+}
+.info-title {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.info-subtitle {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #5a4a3a;
+}
+.info-dates {
+  margin-top: 4px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #9a7a5a;
+}
+.info-body {
+  margin: 16px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #4a3c30;
+  text-wrap: pretty;
+}
+.info-tags {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.info-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(193, 101, 74, 0.12);
+  color: #a04e34;
+}

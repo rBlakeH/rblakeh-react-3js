@@ -1,0 +1,22 @@
+{
+  "name": "rblakeh-portfolio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "rBlakeH.com — 3D portfolio built with React + react-three-fiber",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.160.1",
+    "@react-three/fiber": "^8.15.19"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.1.6"
+  }
+}
