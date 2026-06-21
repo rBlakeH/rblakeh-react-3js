@@ -1,13 +1,15 @@
+import { useEffect } from 'react';
 import Mountains from './Mountains.jsx';
 import Flatirons from './Flatirons.jsx';
 import PineTree from './PineTree.jsx';
 import { PINES } from '../data/scenes.js';
+import { useModel, preloadModel } from './useModel.js';
 
-/**
- * BoulderIsland — the floating chunk of land: a faceted grass disc with a tapered
- * rock underside, the forest ridge, the Flatirons, and scattered pines.
- */
+preloadModel('/models/boulder/Bison.glb');
+
 export default function BoulderIsland({ config }) {
+  const buffalo = useModel('/models/boulder/Bison.glb');
+
   return (
     <group>
       {/* Grass top */}
@@ -24,6 +26,10 @@ export default function BoulderIsland({ config }) {
 
       <Mountains />
       <Flatirons color={config.rockColor} />
+
+      {buffalo && (
+        <primitive object={buffalo} position={[3, 0, 4]} scale={0.5} castShadow />
+      )}
 
       {PINES.map((p, i) => (
         <PineTree key={i} position={[p[0], 0, p[1]]} seed={i} />
