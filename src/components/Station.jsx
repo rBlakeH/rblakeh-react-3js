@@ -21,7 +21,7 @@ export function Station({ station, rootRef, overlap = true, overlay, onFrame, on
   const stageRef = useRef(null);
   const cardRef = useRef(null);
   const hostRef = useRef(null);
-  const { sceneRef, ready } = useScene(station.id, hostRef);
+  const { sceneRef, ready } = useScene(station.id, hostRef, { cardRef });
 
   useSection(
     rootRef,

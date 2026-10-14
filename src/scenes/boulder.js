@@ -3,6 +3,7 @@
 // Terrain and rock are value-noise displaced (seeded, reload-stable) rather
 // than primitive stacks — the point is a hand-built diorama read, not boxes.
 import * as THREE from 'three';
+import { disposeScene } from './lib/dispose.js';
 
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
@@ -370,109 +371,109 @@ function scatter(group) {
   }
 }
 
+/* ---------- element ---------- */
+class BoulderDiorama {
+  /**
+   * @param {HTMLElement} host element the renderer canvas is appended to
+   * @param {{card?: HTMLElement|null}} [ctx] optional page context
+   */
+  constructor(host, ctx = {}) {
+    this.host = host;
+    this.card = ctx.card ?? null;
 
-/* ---------- scene module ---------- */
-// Ported from the prototype's <boulder-diorama> custom element. What changed:
-//   - three.js comes from the npm package, not the CDN.
-//   - no RAF loop and no scroll reading of its own; the page's single driver
-//     calls frame(progress) only while the section is on screen.
-//   - preserveDrawingBuffer is off. That was prototype thumbnailing; it costs
-//     fill rate and blocks driver-side optimisations.
-//   - dispose() actually frees the GPU resources, since scenes are mounted and
-//     unmounted as you scroll.
-// Geometry, colours, lights and camera numbers are unchanged.
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.domElement.style.cssText = 'display:block;width:100%;height:100%';
+    this.host.appendChild(renderer.domElement);
+    this.renderer = renderer;
 
-export function mount(host) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.domElement.style.cssText = 'display:block;width:100%;height:100%';
-  host.appendChild(renderer.domElement);
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog('#e9e9ec', 152, 272);
+    this.scene = scene;
 
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog('#e9e9ec', 152, 272);
+    this.frustum = 84;
+    const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
+    this.cam = cam;
 
-  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
+    scene.add(new THREE.HemisphereLight('#dfe7f0', '#8d8470', 0.72));
+    const sun = new THREE.DirectionalLight('#fff3e2', 2.0);
+    sun.position.set(-34, 46, 26);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    const sc = sun.shadow.camera;
+    sc.left = -40; sc.right = 40; sc.top = 40; sc.bottom = -40; sc.near = 1; sc.far = 160;
+    sun.shadow.bias = -0.0008;
+    sun.shadow.normalBias = 0.05;
+    scene.add(sun);
+    const fill = new THREE.DirectionalLight('#cfd8e6', 0.5);
+    fill.position.set(30, 18, -24);
+    scene.add(fill);
 
-  scene.add(new THREE.HemisphereLight('#dfe7f0', '#8d8470', 0.72));
-  const sun = new THREE.DirectionalLight('#fff3e2', 2.0);
-  sun.position.set(-34, 46, 26);
-  sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
-  const sc = sun.shadow.camera;
-  sc.left = -40; sc.right = 40; sc.top = 40; sc.bottom = -40; sc.near = 1; sc.far = 160;
-  sun.shadow.bias = -0.0008;
-  sun.shadow.normalBias = 0.05;
-  scene.add(sun);
-  const fill = new THREE.DirectionalLight('#cfd8e6', 0.5);
-  fill.position.set(30, 18, -24);
-  scene.add(fill);
+    const world = new THREE.Group();
+    this.world = world;
+    scene.add(world);
+    world.add(plinth());
+    world.add(terrain());
+    world.add(flatirons());
+    world.add(trail([[14, -13], [9, -8.5], [6.5, -2], [2.5, 3], [-3, 5.5], [-8, 3.5], [-11.5, -1]]));
+    world.add(auditorium(8.5, 1.5, -0.42));
+    [[13.5, -4.5, 2], [4.8, 7.2, 9], [12.5, 6.5, 15], [2.2, -5.5, 23]].forEach(([x, z, s]) => world.add(cottage(x, z, s)));
+    scatter(world);
 
-  const world = new THREE.Group();
-  scene.add(world);
-  world.add(plinth());
-  world.add(terrain());
-  world.add(flatirons());
-  world.add(trail([[14, -13], [9, -8.5], [6.5, -2], [2.5, 3], [-3, 5.5], [-8, 3.5], [-11.5, -1]]));
-  world.add(auditorium(8.5, 1.5, -0.42));
-  [[13.5, -4.5, 2], [4.8, 7.2, 9], [12.5, 6.5, 15], [2.2, -5.5, 23]].forEach(([x, z, s]) => world.add(cottage(x, z, s)));
-  scatter(world);
-
-  // camera state, lerped toward its scroll target every frame
-  let az = -0.72, elev = 0.58, fr = 84;
-  let aspect = 1.4;
-
-  function resize() {
-    const w = host.clientWidth || 800, h = host.clientHeight || 600;
-    renderer.setSize(w, h, false);
-    aspect = w / h;
+    this.az = -0.72; this.el = 0.58; this.fr = this.frustum;
+    this.clock = new THREE.Clock();
+    this.resize();
+    this._ro = new ResizeObserver(() => this.resize());
+    this._ro.observe(this.host);
   }
-  resize();
-  const ro = new ResizeObserver(resize);
-  ro.observe(host);
 
-  return {
+  dispose() {
+    this._ro?.disconnect();
+    disposeScene(this.scene, this.renderer);
+  }
+
+  resize() {
+    const w = this.host.clientWidth || 800, h = this.host.clientHeight || 600;
+    this.renderer.setSize(w, h, false);
+    this.aspect = w / h;
+  }
+
+  /** One step of the page loop. @param {number} p this station's scroll progress */
+  frame = (p) => {
+    const t = this.clock.elapsedTime + this.clock.getDelta() * 0;
+
     // scroll: slow turntable from south-east toward east, easing down to a
     // flatter elevation and pushing in on the ridge
-    frame(p) {
-      const azT = lerp(-0.86, -0.18, smoothstep(0, 1, p));
-      const elT = lerp(0.62, 0.40, smoothstep(0.1, 0.95, p));
-      const frT = lerp(84, 70, smoothstep(0.05, 0.95, p));
-      az = lerp(az, azT, 0.045);
-      elev = lerp(elev, elT, 0.045);
-      fr = lerp(fr, frT, 0.05);
+    const azT = lerp(-0.86, -0.18, smoothstep(0, 1, p));
+    const elT = lerp(0.62, 0.40, smoothstep(0.1, 0.95, p));
+    const frT = lerp(84, 70, smoothstep(0.05, 0.95, p));
+    this.az = lerp(this.az, azT, 0.045);
+    this.el = lerp(this.el, elT, 0.045);
+    this.fr = lerp(this.fr, frT, 0.05);
 
-      const halfH = fr / 2, halfW = halfH * (aspect || 1.4);
-      cam.left = -halfW; cam.right = halfW; cam.top = halfH; cam.bottom = -halfH;
-      cam.updateProjectionMatrix();
+    const halfH = this.fr / 2, halfW = halfH * (this.aspect || 1.4);
+    const c = this.cam;
+    c.left = -halfW; c.right = halfW; c.top = halfH; c.bottom = -halfH;
+    c.updateProjectionMatrix();
 
-      const d = 150;
-      cam.position.set(
-        Math.cos(az) * Math.cos(elev) * d,
-        Math.sin(elev) * d,
-        Math.sin(az) * Math.cos(elev) * d + 4
-      );
-      const focus = lerp(1.0, -3.0, smoothstep(0.2, 1, p));
-      cam.lookAt(focus, 4.4, lerp(3, -1, p));
+    const d = 150;
+    c.position.set(
+      Math.cos(this.az) * Math.cos(this.el) * d,
+      Math.sin(this.el) * d,
+      Math.sin(this.az) * Math.cos(this.el) * d + 4
+    );
+    const focus = lerp(1.0, -3.0, smoothstep(0.2, 1, p));
+    c.lookAt(focus, 4.4, lerp(3, -1, p));
 
-      renderer.render(scene, cam);
-    },
-
-    resize,
-
-    dispose() {
-      ro.disconnect();
-      scene.traverse((o) => {
-        if (!o.isMesh) return;
-        o.geometry?.dispose();
-        const m = o.material;
-        if (Array.isArray(m)) m.forEach((x) => x.dispose());
-        else m?.dispose();
-      });
-      renderer.dispose();
-      renderer.forceContextLoss();
-      renderer.domElement.remove();
-    },
+    this.renderer.render(this.scene, c);
   };
 }
+
+/**
+ * @param {HTMLElement} host
+ * @param {{card?: HTMLElement|null}} [ctx]
+ * @returns {{frame: (p: number) => void, resize: () => void, dispose: () => void}}
+ */
+export const mount = (host, ctx) => new BoulderDiorama(host, ctx);

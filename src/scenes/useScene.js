@@ -9,9 +9,12 @@ import { sceneLoaders } from './registry.js';
  *
  * @param {string} id station id, keyed into the scene registry
  * @param {React.RefObject<HTMLElement>} hostRef
+ * @param {object} [ctx] extra page nodes a scene may need, resolved at mount
+ * @param {React.RefObject<HTMLElement>} [ctx.cardRef] the role card — the
+ *   inspection scene fits its frustum to the space the card leaves free
  * @returns {{ sceneRef: React.MutableRefObject<object|null>, ready: boolean }}
  */
-export function useScene(id, hostRef) {
+export function useScene(id, hostRef, { cardRef } = {}) {
   const sceneRef = useRef(null);
   const [ready, setReady] = useState(false);
 
@@ -23,7 +26,7 @@ export function useScene(id, hostRef) {
     load()
       .then((mod) => {
         if (!live || !hostRef.current) return;
-        sceneRef.current = mod.mount(hostRef.current);
+        sceneRef.current = mod.mount(hostRef.current, { card: cardRef?.current ?? null });
         setReady(true);
       })
       .catch((err) => {
@@ -37,7 +40,7 @@ export function useScene(id, hostRef) {
       sceneRef.current?.dispose();
       sceneRef.current = null;
     };
-  }, [id, hostRef]);
+  }, [id, hostRef, cardRef]);
 
   return { sceneRef, ready };
 }
