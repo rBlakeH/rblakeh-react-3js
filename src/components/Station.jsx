@@ -21,15 +21,19 @@ export function Station({ station, rootRef, overlap = true, overlay, onFrame, on
   const stageRef = useRef(null);
   const cardRef = useRef(null);
   const hostRef = useRef(null);
-  const { sceneRef, ready } = useScene(station.id, hostRef, { cardRef });
+  const { sceneRef, ready, update } = useScene(station.id, hostRef, { cardRef });
 
   useSection(
     rootRef,
     (frame) => {
-      applyStation(frame.progress, stageRef.current, cardRef.current, station.dir);
-      // Only draw while the section is on screen; a stage at opacity 0 has
-      // nothing to show and its scene should not be burning a frame.
-      if (frame.visible) sceneRef.current?.frame(frame.progress, frame.now);
+      const opacity = applyStation(frame.progress, stageRef.current, cardRef.current, station.dir);
+      // The manager builds this scene as it approaches and takes its context
+      // back once it is far enough behind.
+      update(frame.distance);
+      // Draw only what can actually be seen. A section intersects the viewport
+      // well before and after its stage fades, and drawing a transparent stage
+      // costs exactly as much as drawing a visible one.
+      if (opacity > 0.01) sceneRef.current?.frame(frame.progress, frame.now);
       onFrame?.(frame, stageRef.current);
     },
     () => {

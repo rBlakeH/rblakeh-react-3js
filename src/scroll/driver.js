@@ -53,7 +53,7 @@ export function createScrollDriver() {
   };
 
   function start() {
-    if (running || reduced() || !entries.size) return;
+    if (running || reduced() || !entries.size || document.hidden) return;
     running = true;
     raf = requestAnimationFrame(frame);
   }
@@ -66,6 +66,14 @@ export function createScrollDriver() {
   function settleAll() {
     for (const e of entries) e.settle?.();
   }
+
+  // A backgrounded tab still gets rAF in some browsers, and there is nothing
+  // to draw for.
+  const onVisibility = () => {
+    if (document.hidden) stop();
+    else start();
+  };
+  document.addEventListener('visibilitychange', onVisibility);
 
   const onPrefChange = () => {
     if (reduced()) {
@@ -94,6 +102,7 @@ export function createScrollDriver() {
     destroy() {
       stop();
       entries.clear();
+      document.removeEventListener('visibilitychange', onVisibility);
       mq?.removeEventListener?.('change', onPrefChange);
     },
   };

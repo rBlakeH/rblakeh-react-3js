@@ -4,11 +4,14 @@
 
 import { sstep, TIMING } from './timings.js';
 
+/** @returns {number} the stage's opacity — see applyStation. */
 export function applyFinaleStage(p, stage) {
-  if (!stage) return;
   const inS = sstep(TIMING.finaleStage.in[0], TIMING.finaleStage.in[1], p);
-  stage.style.opacity = inS;
-  stage.style.transform = `translate3d(0, ${(1 - inS) * 10}%, 0) scale(${0.95 + inS * 0.05})`;
+  if (stage) {
+    stage.style.opacity = inS;
+    stage.style.transform = `translate3d(0, ${(1 - inS) * 10}%, 0) scale(${0.95 + inS * 0.05})`;
+  }
+  return inS;
 }
 
 export function applyFinaleText(p, text) {

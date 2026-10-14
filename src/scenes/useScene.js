@@ -1,46 +1,39 @@
-import { useEffect, useRef, useState } from 'react';
-import { sceneLoaders } from './registry.js';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { sceneManager } from './manager.js';
 
 /**
- * Mount a diorama module into `hostRef` and hand back a ref to its instance.
- * The scroll driver calls `instance.frame(progress)` — this hook never renders
- * per frame; the only state it keeps is "has the module landed", used once to
- * drop the placeholder.
+ * Hand a station's stage to the scene manager, which decides when the diorama
+ * is built and when its WebGL context is handed back.
+ *
+ * This hook never renders per frame. Its only state is "is a scene live",
+ * which flips when one is built or evicted — both off-screen events.
  *
  * @param {string} id station id, keyed into the scene registry
  * @param {React.RefObject<HTMLElement>} hostRef
- * @param {object} [ctx] extra page nodes a scene may need, resolved at mount
+ * @param {object} [ctx]
  * @param {React.RefObject<HTMLElement>} [ctx.cardRef] the role card — the
  *   inspection scene fits its frustum to the space the card leaves free
- * @returns {{ sceneRef: React.MutableRefObject<object|null>, ready: boolean }}
+ * @returns {{ sceneRef: React.MutableRefObject<object|null>, ready: boolean,
+ *   update: (distance: number) => void }}
  */
 export function useScene(id, hostRef, { cardRef } = {}) {
   const sceneRef = useRef(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const load = sceneLoaders[id];
-    if (!load) return undefined;
-
-    let live = true;
-    load()
-      .then((mod) => {
-        if (!live || !hostRef.current) return;
-        sceneRef.current = mod.mount(hostRef.current, { card: cardRef?.current ?? null });
-        setReady(true);
-      })
-      .catch((err) => {
-        // A scene failing to load must not take the page down — the card and
-        // the scroll shell stand on their own.
-        console.error(`scene "${id}" failed to load`, err);
-      });
-
-    return () => {
-      live = false;
-      sceneRef.current?.dispose();
-      sceneRef.current = null;
-    };
+    if (!hostRef.current) return undefined;
+    return sceneManager.register({
+      id,
+      host: hostRef.current,
+      getCtx: () => ({ card: cardRef?.current ?? null }),
+      onChange: (instance) => {
+        sceneRef.current = instance;
+        setReady(Boolean(instance));
+      },
+    });
   }, [id, hostRef, cardRef]);
 
-  return { sceneRef, ready };
+  const update = useCallback((distance) => sceneManager.update(id, distance), [id]);
+
+  return { sceneRef, ready, update };
 }

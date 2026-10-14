@@ -33,11 +33,15 @@ export function applyHero(p, hero) {
 }
 
 // dir: +1 = scene enters from the right, card sits left; -1 mirrors it.
+// Returns the stage's opacity, which is what decides whether its scene is
+// worth drawing — a section can intersect the viewport for a long stretch
+// while its stage is still fully transparent.
 export function applyStation(p, stage, card, dir) {
   const inS = sstep(TIMING.stage.in[0], TIMING.stage.in[1], p);
   const outS = sstep(TIMING.stage.out[0], TIMING.stage.out[1], p);
+  const opacity = Math.min(inS, 1 - outS);
   if (stage) {
-    stage.style.opacity = Math.min(inS, 1 - outS);
+    stage.style.opacity = opacity;
     stage.style.transform = `translate3d(${
       dir * ((1 - inS) * 34 + outS * -26)
     }%, 0, 0) scale(${0.94 + inS * 0.06 - outS * 0.05})`;
@@ -50,6 +54,7 @@ export function applyStation(p, stage, card, dir) {
       dir * ((1 - cardIn) * 46 + cardOut * -34)
     }px, -50%, 0)`;
   }
+  return opacity;
 }
 
 // Settled state for prefers-reduced-motion / no-RAF: everything on screen, untransformed.

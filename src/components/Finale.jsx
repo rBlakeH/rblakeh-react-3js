@@ -24,7 +24,7 @@ export function Finale({ rootRef, onJump }) {
   const hostRef = useRef(null);
   const flapRef = useRef(null);
 
-  const { sceneRef, ready } = useScene('terminus', hostRef);
+  const { sceneRef, ready, update } = useScene('terminus', hostRef);
 
   // The stage sits under the text block, so its top depends on how tall that
   // block lays out — a resize-time measurement, not a per-frame one.
@@ -46,10 +46,11 @@ export function Finale({ rootRef, onJump }) {
   useSection(
     rootRef,
     (frame) => {
-      applyFinaleStage(frame.progress, stageRef.current);
+      const opacity = applyFinaleStage(frame.progress, stageRef.current);
       applyFinaleText(frame.progress, textRef.current);
       flapRef.current?.(frame.progress);
-      if (frame.visible) sceneRef.current?.frame(frame.progress);
+      update(frame.distance);
+      if (opacity > 0.01) sceneRef.current?.frame(frame.progress);
     },
     () => settleFinale({ stage: stageRef.current, text: textRef.current })
   );

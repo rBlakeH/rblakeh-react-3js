@@ -1,4 +1,4 @@
-import { chromium } from 'playwright';
+import { chromium, devices } from 'playwright';
 const b = await chromium.launch();
 const page = await b.newPage({ viewport: { width: 1440, height: 900 } });
 const errs = [];
@@ -33,6 +33,82 @@ for (let i = 0; i < labels.length; i++) {
   }, i);
   console.log(`  ${labels[i].padEnd(12)} landed within ${r.off}px of target, progress ${r.progress}`);
 }
+
+
+// --- scroll sweep: lazy mount, context budget, no blank stage --------------
+console.log('scroll sweep:');
+// a fresh page, so "at first paint" means it
+const sweepPage = await b.newPage({ viewport: { width: 1440, height: 900 } });
+sweepPage.on('pageerror', (e) => errs.push(e.message));
+await sweepPage.goto('http://localhost:5181/', { waitUntil: 'load' });
+await sweepPage.waitForTimeout(1500);
+const atLoad = await sweepPage.evaluate(() => document.querySelectorAll('canvas').length);
+const budget = await sweepPage.evaluate(() => window.__sceneManager?.stats?.max ?? null);
+console.log(`  context budget: ${budget}`);
+console.log(`  canvases at first paint: ${atLoad}`);
+
+const VH = 900;
+const height = await sweepPage.evaluate(() => document.scrollingElement.scrollHeight - innerHeight);
+let maxCanvases = 0;
+const blanks = [];
+for (let y = 0; y <= height; y += Math.round(VH * 0.4)) {
+  await sweepPage.evaluate((y) => (document.scrollingElement.scrollTop = y), y);
+  await sweepPage.waitForTimeout(260);
+  const r = await sweepPage.evaluate(() => {
+    const out = { canvases: document.querySelectorAll('canvas').length, lit: [] };
+    for (const s of document.querySelectorAll('[data-scroll-root]')) {
+      const stage = s.querySelector('.stage, .finale__stage');
+      const op = Number(stage?.style.opacity || 0);
+      if (op <= 0.05) continue;
+      const c = s.querySelector('canvas');
+      out.lit.push({
+        label: s.getAttribute('data-screen-label').slice(0, 2),
+        opacity: +op.toFixed(2),
+        hasCanvas: !!c,
+      });
+    }
+    return out;
+  });
+  maxCanvases = Math.max(maxCanvases, r.canvases);
+  for (const l of r.lit) if (!l.hasCanvas) blanks.push(`y=${y} ${l.label} opacity ${l.opacity}`);
+}
+console.log(`  peak live canvases during sweep: ${maxCanvases}`);
+console.log(blanks.length
+  ? `  BLANK STAGES: ${blanks.join('; ')}`
+  : '  no visible stage was ever without a scene');
+await sweepPage.close();
+
+
+// --- the same sweep at a phone viewport -----------------------------------
+console.log('mobile sweep (Pixel 5):');
+const mctx = await b.newContext({ ...devices['Pixel 5'] });
+const mpage = await mctx.newPage();
+mpage.on('pageerror', (e) => errs.push('mobile: ' + e.message));
+await mpage.goto('http://localhost:5181/', { waitUntil: 'load' });
+await mpage.waitForTimeout(1500);
+const mvp = mpage.viewportSize();
+console.log(`  viewport ${mvp.width}x${mvp.height}, budget ${await mpage.evaluate(() => window.__sceneManager?.stats?.max ?? null)}`);
+const mheight = await mpage.evaluate(() => document.scrollingElement.scrollHeight - innerHeight);
+let mpeak = 0;
+const mblanks = [];
+for (let y = 0; y <= mheight; y += Math.round(mvp.height * 0.4)) {
+  await mpage.evaluate((y) => (document.scrollingElement.scrollTop = y), y);
+  await mpage.waitForTimeout(300);
+  const r = await mpage.evaluate(() => {
+    const out = { n: document.querySelectorAll('canvas').length, lit: [] };
+    for (const s of document.querySelectorAll('[data-scroll-root]')) {
+      const stage = s.querySelector('.stage, .finale__stage');
+      if (Number(stage?.style.opacity || 0) > 0.05)
+        out.lit.push({ l: s.getAttribute('data-screen-label').slice(0, 2), c: !!s.querySelector('canvas') });
+    }
+    return out;
+  });
+  mpeak = Math.max(mpeak, r.n);
+  for (const l of r.lit) if (!l.c) mblanks.push(`y=${y} ${l.l}`);
+}
+console.log(`  peak live canvases: ${mpeak}`);
+console.log(mblanks.length ? `  BLANK STAGES: ${mblanks.join('; ')}` : '  no visible stage was ever without a scene');
+await mctx.close();
 
 // --- mount / dispose / remount --------------------------------------------
 console.log('remount cycle:');
