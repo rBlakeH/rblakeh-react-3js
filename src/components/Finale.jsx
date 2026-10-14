@@ -7,6 +7,8 @@ import {
   measureFinale,
   settleFinale,
 } from '../scroll/finale.js';
+import { createFlapBoard } from '../scroll/flap.js';
+import { useScene } from '../scenes/useScene.js';
 import { StationDirectory } from './StationDirectory.jsx';
 
 /**
@@ -19,16 +21,26 @@ export function Finale({ rootRef, onJump }) {
   const textRef = useRef(null);
   const paraRef = useRef(null);
   const boardRef = useRef(null);
+  const hostRef = useRef(null);
+  const flapRef = useRef(null);
+
+  const { sceneRef, ready } = useScene('terminus', hostRef);
 
   // The stage sits under the text block, so its top depends on how tall that
   // block lays out — a resize-time measurement, not a per-frame one.
   useEffect(() => {
-    const measure = () =>
+    const measure = () => {
       measureFinale({ stage: stageRef.current, text: textRef.current, para: paraRef.current });
+      sceneRef.current?.resize();
+    };
     measure();
     window.addEventListener('resize', measure);
     document.fonts?.ready.then(measure).catch(() => {});
     return () => window.removeEventListener('resize', measure);
+  }, [sceneRef]);
+
+  useEffect(() => {
+    if (boardRef.current) flapRef.current = createFlapBoard(boardRef.current);
   }, []);
 
   useSection(
@@ -36,6 +48,8 @@ export function Finale({ rootRef, onJump }) {
     (frame) => {
       applyFinaleStage(frame.progress, stageRef.current);
       applyFinaleText(frame.progress, textRef.current);
+      flapRef.current?.(frame.progress);
+      if (frame.visible) sceneRef.current?.frame(frame.progress);
     },
     () => settleFinale({ stage: stageRef.current, text: textRef.current })
   );
@@ -49,7 +63,8 @@ export function Finale({ rootRef, onJump }) {
     >
       <div className="station__pin">
         <div ref={stageRef} className="finale__stage" aria-hidden="true">
-          <div className="stage__placeholder">{finale.label}</div>
+          <div ref={hostRef} className="stage__scene" />
+          {!ready && <div className="stage__placeholder">{finale.label}</div>}
         </div>
 
         <div ref={textRef} className="finale__text">

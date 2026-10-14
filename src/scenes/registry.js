@@ -10,6 +10,7 @@ export const sceneLoaders = {
   desert: () => import('./desert.js'),
   yard: () => import('./yard.js'),
   inspection: () => import('./inspection.js'),
+  terminus: () => import('./terminus.js'),
 };
 
 export const hasScene = (id) => Boolean(sceneLoaders[id]);
