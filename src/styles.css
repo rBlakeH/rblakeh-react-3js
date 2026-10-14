@@ -1,151 +1,523 @@
-/* ----- Reset & page ----- */
-* {
-  box-sizing: border-box;
+/* Design tokens, gradient and component styles ported from the approved
+   prototype (.claude/v2). The prototype carried everything as inline style
+   attributes plus DC-only `style-before` / `style-hover` attributes; those are
+   real rules here. Values are unchanged. */
+
+:root {
+  --ink: #23262b;
+  --ink-80: #43474d;
+  --ink-65: #4c5157;
+  --ink-45: #74797f;
+  --mute: #8b8f96;
+
+  --accent: #b5614a;
+  --accent-ink: #96482f;
+  --accent-wash: rgba(181, 97, 74, 0.11);
+
+  --card-bg: rgba(252, 252, 253, 0.94);
+  --card-border: rgba(35, 38, 43, 0.09);
+  --card-radius: 20px;
+  --card-shadow: 0 26px 62px -22px rgba(30, 32, 38, 0.42);
+
+  --board-bg: #23262b;
+  --board-ink: #f1ede4;
+  --board-rule: rgba(241, 237, 228, 0.1);
+
+  --sans: 'Space Grotesk', system-ui, sans-serif;
+  --mono: 'Space Mono', monospace;
+
+  /* Station length is a design prop in the prototype (180–520vh, default 300). */
+  --station-length: 300vh;
+  --finale-length: 240vh;
 }
+
 html,
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
-  /* Background gradient is set from the active theme in App.jsx; this is a
-     sensible Golden Hour fallback before JS runs. */
-  background: linear-gradient(180deg, #ffd9a0 0%, #ffb988 45%, #ffe6cf 100%);
-  font-family: 'Space Grotesk', system-ui, sans-serif;
-  color: #2a1f16;
 }
 
-/* The R3F canvas — fixed full-viewport behind the overlays. */
-.scene-canvas {
-  position: fixed;
+body {
+  background: radial-gradient(125% 100% at 62% 12%, #f8f8f9 0%, #efeff1 46%, #e4e4e8 100%) fixed;
+  background-color: #eaeaee;
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent-ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(150, 72, 47, 0.32);
+}
+
+a:hover {
+  color: var(--ink);
+  border-bottom-color: rgba(35, 38, 43, 0.4);
+}
+
+::selection {
+  background: rgba(181, 97, 74, 0.2);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- scroll shell ---------- */
+
+/* Sections 2–6 pull up a full viewport so the next stage pins the moment the
+   previous one releases. This removes the dead scroll between scenes. */
+.station {
+  position: relative;
+  min-height: var(--station-length);
+}
+
+.station--overlap {
+  margin-top: -100vh;
+}
+
+.station__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.stage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(78%, 1180px);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.stage--right {
+  right: 0;
+}
+
+.stage--left {
+  left: 0;
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  position: absolute;
   inset: 0;
-  width: 100vw !important;
-  height: 100vh !important;
-  display: block;
-  z-index: 1;
-}
-
-/* Generates the scroll range that drives the experience. */
-.scroll-track {
-  height: 240vh;
-}
-
-/* ----- Intro hero ----- */
-.intro {
-  position: fixed;
-  inset: 0;
-  z-index: 2;
+  z-index: 4;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: center;
+  padding: 0 clamp(22px, 6vw, 96px);
   pointer-events: none;
-  color: #2a1f16;
-}
-.intro-eyebrow {
-  font-family: 'Space Mono', monospace;
-  font-size: 13px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  opacity: 0.7;
-  margin-bottom: 18px;
-}
-.intro-name {
-  margin: 0;
-  font-size: clamp(48px, 9vw, 128px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  text-shadow: 0 6px 28px rgba(120, 60, 20, 0.18);
-}
-.intro-role {
-  margin-top: 16px;
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: 500;
-  opacity: 0.85;
-}
-.intro-hint {
-  position: absolute;
-  bottom: 7vh;
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  opacity: 0.6;
 }
 
-/* ----- Info card ----- */
-.info-card {
-  position: fixed;
-  left: clamp(20px, 5vw, 72px);
-  bottom: 9vh;
-  z-index: 3;
-  width: min(430px, 86vw);
-  padding: 30px 32px;
-  opacity: 0;
-  transform: translateY(70px);
-  pointer-events: none;
-  background: rgba(255, 253, 248, 0.94);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(120, 70, 40, 0.1);
-  border-radius: 22px;
-  box-shadow: 0 24px 60px -18px rgba(90, 50, 20, 0.4);
-  color: #2a1f16;
+.hero__route {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--mute);
 }
-.info-label {
+
+.hero__name {
+  margin: 16px 0 0;
+  font-size: clamp(40px, 7vw, 104px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+.hero__role {
+  margin-top: 14px;
+  font-size: clamp(15px, 1.6vw, 21px);
+  font-weight: 500;
+  color: var(--ink-80);
+}
+
+.hero__prompt {
+  position: absolute;
+  left: clamp(22px, 6vw, 96px);
+  bottom: 7vh;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hero__arrow {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--accent);
+}
+
+.hero__prompt-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero__prompt-main {
+  font-size: clamp(17px, 1.7vw, 22px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.hero__prompt-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-45);
+}
+
+/* ---------- role card ---------- */
+
+.card {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  padding: 24px 28px;
+  opacity: 0;
+  will-change: transform, opacity;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.card--left {
+  left: clamp(20px, 5vw, 76px);
+}
+
+.card--right {
+  right: clamp(20px, 5vw, 76px);
+}
+
+.eyebrow {
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-bottom: 14px;
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #c1654a;
+  color: var(--accent);
 }
-.info-dot {
+
+.card .eyebrow {
+  margin-bottom: 12px;
+}
+
+.eyebrow__dot {
   width: 8px;
   height: 8px;
+  flex: none;
   border-radius: 50%;
-  background: #c1654a;
+  background: var(--accent);
 }
-.info-title {
+
+.card__title {
   margin: 0;
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(21px, 2.2vw, 27px);
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.05;
+  line-height: 1.08;
 }
-.info-subtitle {
-  margin-top: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #5a4a3a;
-}
-.info-dates {
-  margin-top: 4px;
-  font-family: 'Space Mono', monospace;
-  font-size: 13px;
-  color: #9a7a5a;
-}
-.info-body {
-  margin: 16px 0 0;
+
+.card__subtitle {
+  margin-top: 8px;
   font-size: 15px;
-  line-height: 1.6;
-  color: #4a3c30;
+  font-weight: 600;
+  color: var(--ink-65);
+}
+
+.card__dates {
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--mute);
+}
+
+.card__list {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-80);
   text-wrap: pretty;
 }
-.info-tags {
-  margin-top: 18px;
+
+.card__list li {
+  position: relative;
+  padding-left: 15px;
+}
+
+.card__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.card__tags {
+  margin-top: 14px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 7px;
 }
-.info-tag {
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  padding: 6px 12px;
+
+.tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 6px 11px;
   border-radius: 999px;
-  background: rgba(193, 101, 74, 0.12);
-  color: #a04e34;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+}
+
+/* ---------- finale ---------- */
+
+.finale {
+  min-height: var(--finale-length);
+}
+
+.finale__stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 48vh;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.finale__text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: clamp(24px, 7vh, 88px) clamp(18px, 4vw, 96px) 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: clamp(20px, 4vw, 72px);
+  align-items: start;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.finale__col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2.2vh, 18px);
+  min-width: 0;
+}
+
+.finale__heading {
+  margin: 0;
+  font-size: clamp(30px, min(4.6vw, 8vh), 64px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.finale__para {
+  margin: 0;
+  max-width: 54ch;
+  font-size: clamp(14px, 1.3vw, 17px);
+  line-height: 1.6;
+  color: var(--ink-65);
+  text-wrap: pretty;
+}
+
+.finale__credits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-45);
+}
+
+/* ---------- route jump strip ---------- */
+
+.route {
+  position: relative;
+  margin-top: 10px;
+  max-width: 520px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.route::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 6px;
+  top: 4px;
+  height: 1px;
+  background: rgba(35, 38, 43, 0.22);
+}
+
+.route__stop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-45);
+}
+
+.route__stop:hover {
+  color: var(--ink);
+}
+
+.route__stop:first-child {
+  align-items: flex-start;
+}
+
+.route__stop .route__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #23262b;
+}
+
+.route__today {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.route__today .route__dot {
+  width: 9px;
+  height: 9px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: #f4f4f6;
+}
+
+/* ---------- split-flap station directory ---------- */
+
+.board {
+  min-width: 0;
+  max-width: 560px;
+  justify-self: end;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--board-bg);
+  border-radius: 16px;
+  padding: 18px 22px 8px;
+  box-shadow: var(--card-shadow);
+  font-family: var(--mono);
+  color: var(--board-ink);
+}
+
+.board__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #9a9ea5;
+}
+
+.board__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto;
+  gap: 12px;
+  border-top: 1px solid var(--board-rule);
+}
+
+.board__labels {
+  padding: 8px 0;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.board__row {
+  padding: clamp(8px, 1.6vh, 13px) 0;
+  font-size: 13.5px;
+  color: var(--board-ink);
+  white-space: nowrap;
+}
+
+a.board__row {
+  border-bottom: 0;
+  color: var(--board-ink);
+}
+
+a.board__row:hover {
+  background: rgba(241, 237, 228, 0.05);
+  color: var(--board-ink);
+}
+
+.board__cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Pre-load state for a stage whose scene module has not mounted yet. */
+.stage__placeholder {
+  position: absolute;
+  inset: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed rgba(35, 38, 43, 0.14);
+  border-radius: 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--mute);
 }

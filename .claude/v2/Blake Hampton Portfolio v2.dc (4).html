@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="module" src="./boulder-diorama.js"></script>
+<script type="module" src="./longs-diorama.js"></script>
+<script type="module" src="./desert-diorama.js"></script>
+<script type="module" src="./yard-diorama.js"></script>
+<script type="module" src="./inspection-diorama.js"></script>
+<script type="module" src="./terminus-diorama.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(125% 100% at 62% 12%, #f8f8f9 0%, #efeff1 46%, #e4e4e8 100%) fixed;
+    background-color: #eaeaee;
+    color: #23262b;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: #96482f; text-decoration: none; border-bottom: 1px solid rgba(150, 72, 47, 0.32); }
+  a:hover { color: #23262b; border-bottom-color: rgba(35, 38, 43, 0.4); }
+  ::selection { background: rgba(181, 97, 74, 0.2); }
+</style>
+</helmet>
+
+<section ref="{{ trackRef }}" data-scroll-root="true" data-screen-label="01 Boulder" style="position: relative; min-height: 300vh">
+
+  <div style="position: sticky; top: 0; height: 100vh; overflow: hidden">
+
+    <div ref="{{ heroRef }}" style="position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; justify-content: center; padding: 0 clamp(22px, 6vw, 96px); pointer-events: none">
+      <div style="font-family: 'Space Mono', monospace; font-size: 11.5px; letter-spacing: 0.26em; text-transform: uppercase; color: #8b8f96">Boulder → Albuquerque → Fort Worth</div>
+      <h1 style="margin: 16px 0 0; font-size: clamp(40px, 7vw, 104px); font-weight: 700; letter-spacing: -0.035em; line-height: 0.95">Blake Hampton</h1>
+      <div style="margin-top: 14px; font-size: clamp(15px, 1.6vw, 21px); font-weight: 500; color: #43474d">Backend &amp; distributed systems engineer</div>
+      <div style="position: absolute; left: clamp(22px, 6vw, 96px); bottom: 7vh; display: flex; align-items: center; gap: 16px">
+        <div style="width: 44px; height: 44px; flex: none; box-sizing: border-box; border-radius: 50%; border: 1.5px solid var(--accent, #b5614a); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--accent, #b5614a)">↓</div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <div style="font-size: clamp(17px, 1.7vw, 22px); font-weight: 600; letter-spacing: -0.01em; color: #23262b">All aboard! Scroll down to start the trip</div>
+          <div style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: #74797f">Boulder to BNSF</div>
+        </div>
+      </div>
+    </div>
+
+    <div ref="{{ stageRef }}" style="position: absolute; top: 0; bottom: 0; right: 0; width: min(78%, 1180px); opacity: 0; will-change: transform, opacity">
+      <x-import component-from-global-scope="boulder-diorama" hint-size="100%,100%" style="position: absolute; inset: 0"></x-import>
+    </div>
+
+    <article ref="{{ cardRef }}" style="position: absolute; z-index: 3; left: clamp(20px, 5vw, 76px); top: 50%; width: min(392px, 82vw); padding: 24px 28px; opacity: 0; will-change: transform, opacity; background: rgba(252, 252, 253, 0.94); backdrop-filter: blur(10px); border: 1px solid rgba(35, 38, 43, 0.09); border-radius: 20px; box-shadow: 0 26px 62px -22px rgba(30, 32, 38, 0.42)">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent, #b5614a)">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #b5614a)"></span>
+        Boulder, Colorado · Education
+      </div>
+      <h2 style="margin: 0; font-size: clamp(21px, 2.2vw, 27px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08">University of Colorado Boulder</h2>
+      <div style="margin-top: 8px; font-size: 15px; font-weight: 600; color: #4c5157">B.S. Computer Science · College of Engineering</div>
+      <div style="margin-top: 4px; font-family: 'Space Mono', monospace; font-size: 12px; color: #8b8f96">2017 — May 2021</div>
+      <ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45; color: #43474d; text-wrap: pretty">
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Algorithms, AI, data science and computer graphics, with electives in VR and game development.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Research assistant at the ATLAS Institute Thing Lab — VR scene reconstruction from 3D scanning.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Intern at Longs Peak Advisory: ~15 Python/Flask automations behind a drag-and-drop portal on AWS EC2.</li>
+      </ul>
+      <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px">
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Python</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Flask</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">OpenGL</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">VR</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section ref="{{ trackLRef }}" data-scroll-root="true" data-screen-label="02 Longs Peak" style="position: relative; margin-top: -100vh; min-height: 300vh">
+  <div style="position: sticky; top: 0; height: 100vh; overflow: hidden">
+
+    <div ref="{{ stageLRef }}" style="position: absolute; top: 0; bottom: 0; left: 0; width: min(78%, 1180px); opacity: 0; will-change: transform, opacity">
+      <x-import component-from-global-scope="longs-diorama" hint-size="100%,100%" style="position: absolute; inset: 0"></x-import>
+    </div>
+
+    <article ref="{{ cardLRef }}" style="position: absolute; z-index: 3; right: clamp(20px, 5vw, 76px); top: 50%; width: min(400px, 82vw); padding: 24px 28px; opacity: 0; will-change: transform, opacity; background: rgba(252, 252, 253, 0.94); backdrop-filter: blur(10px); border: 1px solid rgba(35, 38, 43, 0.09); border-radius: 20px; box-shadow: 0 26px 62px -22px rgba(30, 32, 38, 0.42)">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent, #b5614a)">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #b5614a)"></span>
+        Longmont, Colorado · Internship
+      </div>
+      <h2 style="margin: 0; font-size: clamp(21px, 2.2vw, 27px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08">Longs Peak Advisory</h2>
+      <div style="margin-top: 8px; font-size: 15px; font-weight: 600; color: #4c5157">Software Engineer Intern</div>
+      <div style="margin-top: 4px; font-family: 'Space Mono', monospace; font-size: 12px; color: #8b8f96">Jan 2020 — Feb 2021</div>
+      <ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45; color: #43474d; text-wrap: pretty">
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Built a suite of ~15 Python/Flask automations behind a drag-and-drop web portal hosted on AWS EC2, transforming client Excel submissions into downstream system formats with pandas and eliminating hours of manual reformatting per run.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Extended the portal to trigger UiPath RPA jobs on demand, and authored supporting technical documentation in LaTeX.</li>
+      </ul>
+      <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px">
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Python</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Flask</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">pandas</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">AWS EC2</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">UiPath</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">LaTeX</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section ref="{{ track2Ref }}" data-scroll-root="true" data-screen-label="03 Albuquerque" style="position: relative; margin-top: -100vh; min-height: 300vh">
+  <div style="position: sticky; top: 0; height: 100vh; overflow: hidden">
+
+    <div ref="{{ stage2Ref }}" style="position: absolute; top: 0; bottom: 0; left: 0; width: min(78%, 1180px); opacity: 0; will-change: transform, opacity">
+      <x-import component-from-global-scope="desert-diorama" hint-size="100%,100%" style="position: absolute; inset: 0"></x-import>
+    </div>
+
+    <article ref="{{ card2Ref }}" style="position: absolute; z-index: 3; right: clamp(20px, 5vw, 76px); top: 50%; width: min(400px, 82vw); padding: 24px 28px; opacity: 0; will-change: transform, opacity; background: rgba(252, 252, 253, 0.94); backdrop-filter: blur(10px); border: 1px solid rgba(35, 38, 43, 0.09); border-radius: 20px; box-shadow: 0 26px 62px -22px rgba(30, 32, 38, 0.42)">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent, #b5614a)">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #b5614a)"></span>
+        Albuquerque, New Mexico
+      </div>
+      <h2 style="margin: 0; font-size: clamp(21px, 2.2vw, 27px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08">iTeam Consulting</h2>
+      <div style="margin-top: 8px; font-size: 15px; font-weight: 600; color: #4c5157">Junior Software Engineer</div>
+      <div style="margin-top: 4px; font-family: 'Space Mono', monospace; font-size: 12px; color: #8b8f96">Feb 2021 — Apr 2022</div>
+      <ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45; color: #43474d; text-wrap: pretty">
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Built and maintained a large ASP.NET Core and Blazor construction loan servicing platform for banking clients — builder draw distributions, loan tracking, provider management.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Implemented multi-field fuzzy search across client, company and free-text fields, replacing rigid exact-match filtering.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Migrated a tribal client's oil tracking app from a REST-backed legacy system to React + Apollo GraphQL, cutting per-page requests from thousands to single digits.</li>
+      </ul>
+      <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px">
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">ASP.NET Core</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Blazor</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">C#</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">React</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">GraphQL</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section ref="{{ track3Ref }}" data-scroll-root="true" data-screen-label="04 Intermodal yard" style="position: relative; margin-top: -100vh; min-height: 300vh">
+  <div style="position: sticky; top: 0; height: 100vh; overflow: hidden">
+
+    <div ref="{{ stage3Ref }}" style="position: absolute; top: 0; bottom: 0; right: 0; width: min(78%, 1180px); opacity: 0; will-change: transform, opacity">
+      <x-import component-from-global-scope="yard-diorama" hint-size="100%,100%" style="position: absolute; inset: 0"></x-import>
+    </div>
+
+    <article ref="{{ card3Ref }}" style="position: absolute; z-index: 3; left: clamp(20px, 5vw, 76px); top: 50%; width: min(420px, 82vw); padding: 24px 28px; opacity: 0; will-change: transform, opacity; background: rgba(252, 252, 253, 0.94); backdrop-filter: blur(10px); border: 1px solid rgba(35, 38, 43, 0.09); border-radius: 20px; box-shadow: 0 26px 62px -22px rgba(30, 32, 38, 0.42)">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent, #b5614a)">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #b5614a)"></span>
+        Fort Worth, Texas · Intermodal
+      </div>
+      <h2 style="margin: 0; font-size: clamp(21px, 2.2vw, 27px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08">BNSF Railway — Intermodal Analytics</h2>
+      <div style="margin-top: 8px; font-size: 15px; font-weight: 600; color: #4c5157">Associate Software Engineer</div>
+      <div style="margin-top: 4px; font-family: 'Space Mono', monospace; font-size: 12px; color: #8b8f96">Jul 2022 — Nov 2024</div>
+      <ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45; color: #43474d; text-wrap: pretty">
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">2023 Employee of the Year for the rollout of Load Planning Optimization (LPO), an intermodal yard optimization system — and co-inventor on the resulting patent application.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Owned the Databricks + PySpark ETL layer behind LPO, joining GPS, equipment and track-assignment data for the optimization models; scaled across 12 facilities.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Wrote a graph traversal audit of the yard routable network that surfaced routing defects producing paths a mile outside facility boundaries — ~20 miles of hostler travel saved per train.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Converted from the management trainee program to full-time engineering in 6 months against an 18-month track.</li>
+      </ul>
+      <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px">
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Databricks</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">PySpark</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">ETL</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">React</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Power BI</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+<section ref="{{ track4Ref }}" data-scroll-root="true" data-screen-label="05 Track measurement" style="position: relative; margin-top: -100vh; min-height: 300vh">
+  <div style="position: sticky; top: 0; height: 100vh; overflow: hidden">
+
+    <div ref="{{ stage4Ref }}" style="position: absolute; top: 0; bottom: 0; left: 0; width: min(78%, 1180px); opacity: 0; will-change: transform, opacity">
+      <x-import component-from-global-scope="inspection-diorama" hint-size="100%,100%" style="position: absolute; inset: 0"></x-import>
+    </div>
+
+    <article ref="{{ card4Ref }}" style="position: absolute; z-index: 3; right: clamp(20px, 5vw, 76px); top: 50%; width: min(420px, 82vw); padding: 24px 28px; opacity: 0; will-change: transform, opacity; background: rgba(252, 252, 253, 0.94); backdrop-filter: blur(10px); border: 1px solid rgba(35, 38, 43, 0.09); border-radius: 20px; box-shadow: 0 26px 62px -22px rgba(30, 32, 38, 0.42)">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent, #b5614a)">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #b5614a)"></span>
+        Current role · Edge / IoT platform
+      </div>
+      <h2 style="margin: 0; font-size: clamp(21px, 2.2vw, 27px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08">Software Engineer II — BNSF Railway</h2>
+      <div style="margin-top: 8px; font-size: 15px; font-weight: 600; color: #4c5157">Edge inspection platform · day-to-day technical lead</div>
+      <div style="margin-top: 4px; font-family: 'Space Mono', monospace; font-size: 12px; color: #8b8f96">Nov 2024 — Present</div>
+      <ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.45; color: #43474d; text-wrap: pretty">
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Own the Python microservice layer of a train-mounted edge inspection system — a rolling data center of servers, cameras and frame grabbers capturing track-defect imagery at track speed.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Rebuilt GPS telemetry as a containerized FastAPI service on OpenShift/OKD via an agentic Claude Code workflow, retiring a Raspberry Pi + GPSD single point of failure.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Cut GPS-to-track location latency from ~550 ms to under 20 ms by collapsing two round trips into one .NET GIS endpoint and multiplexing connections with HTTPX.</li>
+        <li style="position: relative; padding-left: 15px" style-before="content:''; position:absolute; left:0; top:7px; width:5px; height:5px; border-radius:50%; background:var(--accent, #b5614a)">Technical lead: runs standup, grooms the backlog, onboarded 4 engineers, and has run 50+ system design and DS&amp;A interviews this year.</li>
+      </ul>
+      <div style="margin-top: 14px; display: flex; flex-wrap: wrap; gap: 7px">
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">FastAPI</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">OpenShift / OKD</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">mTLS</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">RabbitMQ</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Azure</span>
+        <span style="font-family: 'Space Mono', monospace; font-size: 11px; padding: 6px 11px; border-radius: 999px; background: rgba(181, 97, 74, 0.11); color: #96482f">Claude Code</span>
+      </div>
+    </article>
+
+  </div>
+</section>
+<section ref="{{ track5Ref }}" data-scroll-root="true" data-screen-label="06 End of track" style="position: relative; margin-top: -100vh; min-height: 240vh">
+  <div style="position: sticky; top: 0; height: 100vh; overflow: hidden">
+
+    <div ref="{{ stage5Ref }}" style="position: absolute; left: 0; right: 0; bottom: 0; top: 48vh; opacity: 0; will-change: transform, opacity">
+      <x-import component-from-global-scope="terminus-diorama" hint-size="100%,100%" style="position: absolute; inset: 0"></x-import>
+    </div>
+
+    <div ref="{{ end5Ref }}" style="position: absolute; top: 0; left: 0; right: 0; z-index: 3; padding: clamp(24px, 7vh, 88px) clamp(18px, 4vw, 96px) 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: clamp(20px, 4vw, 72px); align-items: start; opacity: 0; will-change: transform, opacity">
+
+      <div style="display: flex; flex-direction: column; gap: clamp(10px, 2.2vh, 18px); min-width: 0">
+        <div style="display: flex; align-items: center; gap: 9px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent, #b5614a)">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #b5614a)"></span>
+          Terminal · route summary
+        </div>
+        <h2 style="margin: 0; font-size: clamp(30px, min(4.6vw, 8vh), 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 0.98; text-wrap: balance">Thanks for riding the line.</h2>
+        <p ref="{{ para5Ref }}" style="margin: 0; max-width: 54ch; font-size: clamp(14px, 1.3vw, 17px); line-height: 1.6; color: #4c5157; text-wrap: pretty">~5 years building containerized microservices, event-driven pipelines and edge/IoT applications in production industrial environments — Python and C#/.NET on Kubernetes-based platforms, owned from hardware provisioning through cloud integration.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px 12px; font-family: 'Space Mono', monospace; font-size: 12px; color: #74797f">
+          <span>US 2026/0152218 A1 · patent pending</span>
+          <span>·</span>
+          <span>2023 BNSF Employee of the Year</span>
+          <span>·</span>
+          <span>B.S. CS, CU Boulder</span>
+        </div>
+        <div style="position: relative; margin-top: 10px; max-width: 520px; display: flex; justify-content: space-between" style-before="content:''; position:absolute; left:4px; right:6px; top:4px; height:1px; background:rgba(35,38,43,0.22)">
+          <button onClick="{{ go0 }}" style="position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 9px; border: 0; background: none; padding: 0; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #74797f" style-hover="color: #23262b"><span style="width: 9px; height: 9px; border-radius: 50%; background: #23262b"></span>Boulder</button>
+          <button onClick="{{ go1 }}" style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; border: 0; background: none; padding: 0; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #74797f" style-hover="color: #23262b"><span style="width: 9px; height: 9px; border-radius: 50%; background: #23262b"></span>Longs Peak</button>
+          <button onClick="{{ go2 }}" style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; border: 0; background: none; padding: 0; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #74797f" style-hover="color: #23262b"><span style="width: 9px; height: 9px; border-radius: 50%; background: #23262b"></span>Albuquerque</button>
+          <button onClick="{{ go3 }}" style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; border: 0; background: none; padding: 0; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #74797f" style-hover="color: #23262b"><span style="width: 9px; height: 9px; border-radius: 50%; background: #23262b"></span>Fort Worth</button>
+          <button onClick="{{ go4 }}" style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 9px; border: 0; background: none; padding: 0; cursor: pointer; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #74797f" style-hover="color: #23262b"><span style="width: 9px; height: 9px; border-radius: 50%; background: #23262b"></span>Main line</button>
+          <div style="position: relative; display: flex; flex-direction: column; align-items: flex-end; gap: 9px; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent, #b5614a)"><span style="width: 9px; height: 9px; box-sizing: border-box; border-radius: 50%; border: 2px solid var(--accent, #b5614a); background: #f4f4f6"></span>Today</div>
+        </div>
+      </div>
+
+      <div ref="{{ boardRef }}" style="min-width: 0; max-width: 560px; justify-self: end; width: 100%; box-sizing: border-box; background: #23262b; border-radius: 16px; padding: 18px 22px 8px; box-shadow: 0 26px 62px -22px rgba(30, 32, 38, 0.42); font-family: 'Space Mono', monospace; color: #f1ede4">
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding-bottom: 12px; font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase; color: #9a9ea5">
+          <span>Station directory</span>
+          <span>Dallas–Fort Worth</span>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto; gap: 12px; padding: 8px 0; border-top: 1px solid rgba(241, 237, 228, 0.1); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #8b8f96">
+          <span>Line</span><span>Address</span><span>Plat.</span>
+        </div>
+        <a href="mailto:rblakeham@gmail.com" style="display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto; gap: 12px; padding: clamp(8px, 1.6vh, 13px) 0; border-bottom: 0; border-top: 1px solid rgba(241, 237, 228, 0.1); font-size: 13.5px; color: #f1ede4; white-space: nowrap" style-hover="background: rgba(241,237,228,0.05)">
+          <span data-flap="" data-row="0" style="overflow: hidden; text-overflow: ellipsis">EMAIL</span>
+          <span data-flap="" data-row="0" style="overflow: hidden; text-overflow: ellipsis">rblakeham@gmail.com</span>
+          <span data-flap="" data-row="0" style="color: #eaa48b">1</span>
+        </a>
+        <a href="https://www.linkedin.com/in/blake-hampton-b2847a192/" target="_blank" rel="noopener" style="display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto; gap: 12px; padding: clamp(8px, 1.6vh, 13px) 0; border-bottom: 0; border-top: 1px solid rgba(241, 237, 228, 0.1); font-size: 13.5px; color: #f1ede4; white-space: nowrap" style-hover="background: rgba(241,237,228,0.05)">
+          <span data-flap="" data-row="1" style="overflow: hidden; text-overflow: ellipsis">LINKEDIN</span>
+          <span data-flap="" data-row="1" style="overflow: hidden; text-overflow: ellipsis">in/blake-hampton</span>
+          <span data-flap="" data-row="1" style="color: #c9c5bc">2</span>
+        </a>
+        <a href="https://github.com/rBlakeH" style="display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto; gap: 12px; padding: clamp(8px, 1.6vh, 13px) 0; border-bottom: 0; border-top: 1px solid rgba(241, 237, 228, 0.1); font-size: 13.5px; color: #f1ede4; white-space: nowrap" style-hover="background: rgba(241,237,228,0.05)">
+          <span data-flap="" data-row="2" style="overflow: hidden; text-overflow: ellipsis">GITHUB</span>
+          <span data-flap="" data-row="2" style="overflow: hidden; text-overflow: ellipsis">github.com/rBlakeH</span>
+          <span data-flap="" data-row="2" style="color: #c9c5bc">3</span>
+        </a>
+        <div style="display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr) auto; gap: 12px; padding: clamp(8px, 1.6vh, 13px) 0; border-top: 1px solid rgba(241, 237, 228, 0.1); font-size: 13.5px; color: #f1ede4; white-space: nowrap">
+          <span data-flap="" data-row="3" style="overflow: hidden; text-overflow: ellipsis">HOME</span>
+          <span data-flap="" data-row="3" style="overflow: hidden; text-overflow: ellipsis">Dallas–Fort Worth, TX</span>
+          <span data-flap="" data-row="3" style="color: #8fd3a8">4</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#b5614a&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#b5614a&quot;,&quot;#7c6a4a&quot;,&quot;#4a6b7c&quot;,&quot;#23262b&quot;],&quot;section&quot;:&quot;Theme&quot;},&quot;stationLength&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:300,&quot;min&quot;:180,&quot;max&quot;:520,&quot;step&quot;:20,&quot;unit&quot;:&quot;vh&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Scroll&quot;}}">
+const clamp01 = (x) => Math.min(1, Math.max(0, x));
+const sstep = (a, b, x) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+const hash = (s) => { const x = Math.sin(s * 99.13) * 43758.5453; return x - Math.floor(x); };
+const FLAP = 'ABCDEFGHJKLMNPRSTUVWXYZ0123456789';
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.trackRef = React.createRef();
+    this.heroRef = React.createRef();
+    this.stageRef = React.createRef();
+    this.cardRef = React.createRef();
+    this.trackLRef = React.createRef();
+    this.stageLRef = React.createRef();
+    this.cardLRef = React.createRef();
+    this.track2Ref = React.createRef();
+    this.stage2Ref = React.createRef();
+    this.card2Ref = React.createRef();
+    this.track3Ref = React.createRef();
+    this.stage3Ref = React.createRef();
+    this.card3Ref = React.createRef();
+    this.track4Ref = React.createRef();
+    this.stage4Ref = React.createRef();
+    this.card4Ref = React.createRef();
+    this.track5Ref = React.createRef();
+    this.stage5Ref = React.createRef();
+    this.end5Ref = React.createRef();
+    this.boardRef = React.createRef();
+    this.para5Ref = React.createRef();
+    this.gos = [0, 1, 2, 3, 4].map((i) => () => this.go(i));
+  }
+  go(i) {
+    const t = [this.trackRef, this.trackLRef, this.track2Ref, this.track3Ref, this.track4Ref][i].current;
+    if (!t) return;
+    const se = document.scrollingElement || document.documentElement;
+    const top = t.getBoundingClientRect().top + se.scrollTop + (t.offsetHeight - window.innerHeight) * 0.55;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+  finale(p) {
+    const inS = sstep(0.0, 0.22, p);
+    const stage = this.stage5Ref.current;
+    if (stage) {
+      stage.style.opacity = inS;
+      stage.style.transform = `translate3d(0, ${(1 - inS) * 10}%, 0) scale(${0.95 + inS * 0.05})`;
+    }
+    const tIn = sstep(0.18, 0.36, p);
+    const txt = this.end5Ref.current;
+    if (txt) {
+      txt.style.opacity = tIn;
+      txt.style.transform = `translate3d(0, ${(1 - tIn) * -28}px, 0)`;
+      txt.style.pointerEvents = tIn > 0.5 ? 'auto' : 'none';
+      // scene takes whatever is left below the text; drop the paragraph if that gets too tight
+      const vh = window.innerHeight, para = this.para5Ref.current;
+      if (para) {
+        const hidden = para.style.display === 'none';
+        if (!hidden) this._paraH = para.offsetHeight + 18;
+        const bottomWith = txt.offsetTop + txt.offsetHeight + (hidden ? this._paraH || 0 : 0);
+        const hide = vh - bottomWith < vh * 0.34;
+        if (hide !== (para.style.display === 'none')) para.style.display = hide ? 'none' : '';
+      }
+      if (stage) stage.style.top = Math.min(vh * 0.62, txt.offsetTop + txt.offsetHeight + 12) + 'px';
+    }
+    // split-flap: each row settles left→right, rows staggered, after the text lands
+    const b = this.boardRef.current;
+    if (b && !this._flaps) this._flaps = [...b.querySelectorAll('[data-flap]')].map((el, i) => ({ el, i, row: +el.getAttribute('data-row'), txt: el.textContent, last: null }));
+    if (!this._flaps) return;
+    const step = Math.floor(performance.now() / 65);
+    for (const f of this._flaps) {
+      const a = 0.3 + f.row * 0.05, k = sstep(a, a + 0.14, p), n = Math.round(k * f.txt.length);
+      let out = f.txt.slice(0, n);
+      for (let j = n; j < f.txt.length; j++) out += f.txt[j] === ' ' ? ' ' : FLAP[Math.floor(hash(f.i * 31.7 + j * 7.3 + step) * FLAP.length)];
+      if (out !== f.last) { f.el.textContent = out; f.last = out; }
+    }
+  }
+  componentDidMount() { this.applyLength(); this.tick(); }
+  componentDidUpdate() { this.applyLength(); }
+  componentWillUnmount() { cancelAnimationFrame(this._raf); }
+
+  applyLength() {
+    const h = (this.props.stationLength ?? 300) + 'vh';
+    [this.trackRef, this.trackLRef, this.track2Ref, this.track3Ref, this.track4Ref].forEach((r) => { if (r.current) r.current.style.minHeight = h; });
+  }
+
+  progress(ref) {
+    const t = (ref || this.trackRef).current;
+    if (!t) return 0;
+    const r = t.getBoundingClientRect();
+    const span = r.height - window.innerHeight;
+    return span <= 0 ? 0 : clamp01(-r.top / span);
+  }
+
+  // dir: +1 = scene enters from the right, card sits left; -1 mirrors it.
+  station(p, stageRef, cardRef, dir) {
+    const inS = sstep(0.0, 0.18, p);
+    const outS = sstep(0.86, 1.0, p);
+    const stage = stageRef.current;
+    if (stage) {
+      stage.style.opacity = Math.min(inS, 1 - outS);
+      stage.style.transform = `translate3d(${dir * ((1 - inS) * 34 + outS * -26)}%, 0, 0) scale(${0.94 + inS * 0.06 - outS * 0.05})`;
+    }
+    const cardIn = sstep(0.14, 0.3, p);
+    const cardOut = sstep(0.8, 0.94, p);
+    const card = cardRef.current;
+    if (card) {
+      card.style.opacity = Math.min(cardIn, 1 - cardOut);
+      card.style.transform = `translate3d(${dir * ((1 - cardIn) * 46 + cardOut * -34)}px, -50%, 0)`;
+    }
+  }
+
+  tick = () => {
+    this._raf = requestAnimationFrame(this.tick);
+    const p = this.progress();
+
+    // hero clears out first
+    const hero = this.heroRef.current;
+    if (hero) {
+      const o = 1 - sstep(0.0, 0.14, p);
+      hero.style.opacity = o;
+      hero.style.transform = `translate3d(${-6 * (1 - o)}vw, ${-18 * (1 - o)}px, 0)`;
+    }
+
+    this.station(p, this.stageRef, this.cardRef, 1);
+    this.station(this.progress(this.trackLRef), this.stageLRef, this.cardLRef, -1);
+    this.station(this.progress(this.track2Ref), this.stage2Ref, this.card2Ref, -1);
+    this.station(this.progress(this.track3Ref), this.stage3Ref, this.card3Ref, 1);
+    this.station(this.progress(this.track4Ref), this.stage4Ref, this.card4Ref, -1);
+    this.finale(this.progress(this.track5Ref));
+  };
+
+  renderVals() {
+    const accent = this.props.accent ?? '#b5614a';
+    if (typeof document !== 'undefined') document.documentElement.style.setProperty('--accent', accent);
+    return {
+      trackRef: this.trackRef, heroRef: this.heroRef,
+      stageRef: this.stageRef, cardRef: this.cardRef,
+      trackLRef: this.trackLRef, stageLRef: this.stageLRef, cardLRef: this.cardLRef,
+      track2Ref: this.track2Ref, stage2Ref: this.stage2Ref, card2Ref: this.card2Ref,
+      track3Ref: this.track3Ref, stage3Ref: this.stage3Ref, card3Ref: this.card3Ref,
+      track4Ref: this.track4Ref, stage4Ref: this.stage4Ref, card4Ref: this.card4Ref,
+      track5Ref: this.track5Ref, stage5Ref: this.stage5Ref, end5Ref: this.end5Ref, boardRef: this.boardRef, para5Ref: this.para5Ref,
+      go0: this.gos[0], go1: this.gos[1], go2: this.gos[2], go3: this.gos[3], go4: this.gos[4],
+    };
+  }
+}
+</script>
+</body>
+</html>
