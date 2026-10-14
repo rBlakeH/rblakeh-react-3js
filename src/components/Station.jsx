@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useSection } from '../scroll/useDriver.jsx';
 import { applyStation, settleStation } from '../scroll/timings.js';
+import { useScene } from '../scenes/useScene.js';
 import { RoleCard } from './RoleCard.jsx';
 
 /**
@@ -19,14 +20,21 @@ import { RoleCard } from './RoleCard.jsx';
 export function Station({ station, rootRef, overlap = true, overlay, onFrame, onSettle }) {
   const stageRef = useRef(null);
   const cardRef = useRef(null);
+  const hostRef = useRef(null);
+  const { sceneRef, ready } = useScene(station.id, hostRef);
 
   useSection(
     rootRef,
     (frame) => {
       applyStation(frame.progress, stageRef.current, cardRef.current, station.dir);
+      // Only draw while the section is on screen; a stage at opacity 0 has
+      // nothing to show and its scene should not be burning a frame.
+      if (frame.visible) sceneRef.current?.frame(frame.progress, frame.now);
       onFrame?.(frame, stageRef.current);
     },
     () => {
+      // Reduced motion leaves the scene undrawn on purpose — step 6 replaces
+      // the whole stage with the stacked-document fallback.
       settleStation(stageRef.current, cardRef.current);
       onSettle?.();
     }
@@ -46,8 +54,8 @@ export function Station({ station, rootRef, overlap = true, overlay, onFrame, on
           className={`stage ${station.dir > 0 ? 'stage--right' : 'stage--left'}`}
           aria-hidden="true"
         >
-          {/* Scene mounts here. Until then this is the pre-load state. */}
-          <div className="stage__placeholder">{station.label}</div>
+          <div ref={hostRef} className="stage__scene" />
+          {!ready && <div className="stage__placeholder">{station.label}</div>}
         </div>
         <RoleCard ref={cardRef} station={station} />
       </div>

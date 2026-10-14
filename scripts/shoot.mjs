@@ -13,6 +13,7 @@ const url = process.argv[2] || 'http://localhost:5181/';
 const outDir = process.argv[3] || 'shots';
 const progresses = process.argv.slice(4).map(Number);
 const stops = progresses.length ? progresses : [0.5];
+const settleMs = Number(process.env.SHOOT_SETTLE_MS || 120);
 
 mkdirSync(outDir, { recursive: true });
 
@@ -45,7 +46,9 @@ for (const label of labels) {
     await page.evaluate(
       () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
     );
-    await page.waitForTimeout(120);
+    // Camera targets lerp at 0.045/frame, so a freshly-jumped scroll position
+    // needs ~1s of frames before the composition is the settled one.
+    await page.waitForTimeout(settleMs);
     const name = `${label.replace(/\s+/g, '-').toLowerCase()}@${p}`;
     await page.screenshot({ path: `${outDir}/${name}.png` });
     console.log(`${name}.png`);

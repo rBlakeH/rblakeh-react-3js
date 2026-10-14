@@ -506,6 +506,12 @@ a.board__row:hover {
   text-overflow: ellipsis;
 }
 
+/* The diorama's canvas fills the stage. */
+.stage__scene {
+  position: absolute;
+  inset: 0;
+}
+
 /* Pre-load state for a stage whose scene module has not mounted yet. */
 .stage__placeholder {
   position: absolute;
