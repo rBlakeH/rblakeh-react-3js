@@ -139,5 +139,62 @@ for (const id of ids) {
   console.log(`  ${id.padEnd(11)} coverage ${r.first} -> ${r.second}  canvases after dispose ${r.afterDispose}  ${ok ? 'OK' : 'FAIL'}`);
 }
 
+
+// --- fallback modes -------------------------------------------------------
+console.log('fallback modes:');
+async function probeMode(label, ctxOpts, init) {
+  const c = await b.newContext({ viewport: { width: 1280, height: 900 }, ...ctxOpts });
+  const pg = await c.newPage();
+  pg.on('pageerror', (e) => errs.push(`${label}: ${e.message}`));
+  if (init) await pg.addInitScript(init);
+  await pg.goto('http://localhost:5181/', { waitUntil: 'load' });
+  await pg.waitForTimeout(1800);
+  const r = await pg.evaluate(() => ({
+    mode: document.querySelector('.doc') ? 'document' : 'scroll',
+    canvases: document.querySelectorAll('canvas').length,
+    cards: document.querySelectorAll('.card').length,
+    visible: getComputedStyle(document.querySelector('.card')).opacity === '1',
+    board: !!document.querySelector('.board'),
+  }));
+  const want = label === 'normal' ? 'scroll' : 'document';
+  const ok =
+    r.mode === want && r.cards === 5 && r.board &&
+    (want === 'scroll' || (r.canvases === 0 && r.visible));
+  console.log(
+    `  ${label.padEnd(15)} ${r.mode}, ${r.cards} cards, ${r.canvases} canvases, board=${r.board}  ${ok ? 'OK' : 'FAIL'}`
+  );
+  await c.close();
+}
+await probeMode('normal', {});
+await probeMode('reduced-motion', { reducedMotion: 'reduce' });
+await probeMode('no-webgl', {}, () => {
+  const orig = HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function (type, ...rest) {
+    if (String(type).startsWith('webgl')) return null;
+    return orig.call(this, type, ...rest);
+  };
+});
+
+// --- /resume --------------------------------------------------------------
+console.log('/resume:');
+{
+  const { stations, hero, finale } = await import('../src/data/stations.js');
+  const rp = await b.newPage();
+  rp.on('pageerror', (e) => errs.push('resume: ' + e.message));
+  const resp = await rp.goto('http://localhost:5181/resume', { waitUntil: 'load' });
+  const text = await rp.evaluate(() => document.body.innerText.replace(/\s+/g, ' '));
+  const want = [];
+  for (const st of stations) want.push(st.title, st.subtitle, st.dates, ...st.bullets, ...st.tags);
+  want.push(hero.name, hero.role, finale.paragraph, ...finale.credits);
+  for (const row of finale.board.rows) want.push(row.address);
+  const missing = want.filter((w) => !text.includes(w));
+  const scripts = await rp.evaluate(() => document.querySelectorAll('script').length);
+  console.log(
+    `  HTTP ${resp.status()}, ${want.length - missing.length}/${want.length} strings in rendered text, ${scripts} script tags`
+  );
+  if (missing.length) console.log(`  MISSING: ${missing.map((m) => m.slice(0, 50)).join(' | ')}`);
+  await rp.close();
+}
+
 console.log(errs.length ? `\nPAGE ERRORS:\n  ${errs.join('\n  ')}` : '\nno page errors');
 await b.close();

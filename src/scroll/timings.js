@@ -57,14 +57,3 @@ export function applyStation(p, stage, card, dir) {
   return opacity;
 }
 
-// Settled state for prefers-reduced-motion / no-RAF: everything on screen, untransformed.
-export function settleStation(stage, card) {
-  if (stage) {
-    stage.style.opacity = 1;
-    stage.style.transform = 'none';
-  }
-  if (card) {
-    card.style.opacity = 1;
-    card.style.transform = 'translate3d(0, -50%, 0)';
-  }
-}

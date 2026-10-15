@@ -43,14 +43,3 @@ export function measureFinale({ stage, text, para }) {
   }
 }
 
-export function settleFinale({ stage, text }) {
-  if (stage) {
-    stage.style.opacity = 1;
-    stage.style.transform = 'none';
-  }
-  if (text) {
-    text.style.opacity = 1;
-    text.style.transform = 'none';
-    text.style.pointerEvents = 'auto';
-  }
-}

@@ -1,12 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { finale, stations } from '../data/stations.js';
 import { useSection } from '../scroll/useDriver.jsx';
-import {
-  applyFinaleStage,
-  applyFinaleText,
-  measureFinale,
-  settleFinale,
-} from '../scroll/finale.js';
+import { applyFinaleStage, applyFinaleText, measureFinale } from '../scroll/finale.js';
 import { createFlapBoard } from '../scroll/flap.js';
 import { useScene } from '../scenes/useScene.js';
 import { StationDirectory } from './StationDirectory.jsx';
@@ -51,8 +46,7 @@ export function Finale({ rootRef, onJump }) {
       flapRef.current?.(frame.progress);
       update(frame.distance);
       if (opacity > 0.01) sceneRef.current?.frame(frame.progress);
-    },
-    () => settleFinale({ stage: stageRef.current, text: textRef.current })
+    }
   );
 
   return (

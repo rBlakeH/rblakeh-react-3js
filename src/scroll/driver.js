@@ -6,6 +6,9 @@
 // write pass, so a frame costs one layout at most.
 //
 // No per-frame React state: registrants get DOM nodes and write to them.
+//
+// Reduced motion is not this file's problem: App swaps the whole scroll
+// presentation for the stacked document, so the driver is never mounted.
 
 import { clamp01 } from './timings.js';
 
@@ -13,12 +16,6 @@ export function createScrollDriver() {
   const entries = new Set();
   let raf = 0;
   let running = false;
-
-  const mq =
-    typeof window !== 'undefined' && window.matchMedia
-      ? window.matchMedia('(prefers-reduced-motion: reduce)')
-      : null;
-  const reduced = () => !!mq?.matches;
 
   const reads = [];
 
@@ -53,7 +50,7 @@ export function createScrollDriver() {
   };
 
   function start() {
-    if (running || reduced() || !entries.size || document.hidden) return;
+    if (running || !entries.size || document.hidden) return;
     running = true;
     raf = requestAnimationFrame(frame);
   }
@@ -61,10 +58,6 @@ export function createScrollDriver() {
   function stop() {
     running = false;
     cancelAnimationFrame(raf);
-  }
-
-  function settleAll() {
-    for (const e of entries) e.settle?.();
   }
 
   // A backgrounded tab still gets rAF in some browsers, and there is nothing
@@ -75,35 +68,20 @@ export function createScrollDriver() {
   };
   document.addEventListener('visibilitychange', onVisibility);
 
-  const onPrefChange = () => {
-    if (reduced()) {
-      stop();
-      settleAll();
-    } else {
-      start();
-    }
-  };
-  mq?.addEventListener?.('change', onPrefChange);
-
   return {
-    /** @param {{root: () => Element|null, update: (f: object) => void, settle?: () => void}} entry */
+    /** @param {{root: () => Element|null, update: (f: object) => void}} entry */
     register(entry) {
       entries.add(entry);
-      if (reduced()) entry.settle?.();
-      else start();
+      start();
       return () => {
         entries.delete(entry);
         if (!entries.size) stop();
       };
     },
-    get reducedMotion() {
-      return reduced();
-    },
     destroy() {
       stop();
       entries.clear();
       document.removeEventListener('visibilitychange', onVisibility);
-      mq?.removeEventListener?.('change', onPrefChange);
     },
   };
 }

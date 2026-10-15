@@ -1,12 +1,19 @@
 import React, { forwardRef } from 'react';
 
-// dir +1 = scene on the right, card on the left; -1 mirrors it.
-export const RoleCard = forwardRef(function RoleCard({ station }, ref) {
+/**
+ * dir +1 = scene on the right, card on the left; -1 mirrors it.
+ *
+ * `isStatic` drops the absolute placement and the scroll-driven opacity, for
+ * the stacked-document fallback. Same content either way.
+ */
+export const RoleCard = forwardRef(function RoleCard({ station, isStatic = false }, ref) {
   return (
     <article
       ref={ref}
-      className={`card ${station.dir > 0 ? 'card--left' : 'card--right'}`}
-      style={{ width: station.cardWidth }}
+      className={
+        isStatic ? 'card card--static' : `card ${station.dir > 0 ? 'card--left' : 'card--right'}`
+      }
+      style={isStatic ? undefined : { width: station.cardWidth }}
     >
       <div className="eyebrow">
         <span className="eyebrow__dot" aria-hidden="true" />

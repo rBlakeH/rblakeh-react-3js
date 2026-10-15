@@ -5,12 +5,24 @@ import { applyHero } from './scroll/timings.js';
 import { Hero } from './components/Hero.jsx';
 import { Station } from './components/Station.jsx';
 import { Finale } from './components/Finale.jsx';
+import { useFallbackMode } from './fallback/useFallbackMode.js';
+import { FallbackDocument } from './fallback/FallbackDocument.jsx';
 
 export default function App() {
+  const fallback = useFallbackMode();
   return (
-    <ScrollDriverProvider>
-      <Page />
-    </ScrollDriverProvider>
+    <>
+      <a className="skip-link" href="/resume">
+        Skip to the plain-text résumé
+      </a>
+      {fallback ? (
+        <FallbackDocument />
+      ) : (
+        <ScrollDriverProvider>
+          <Page />
+        </ScrollDriverProvider>
+      )}
+    </>
   );
 }
 
@@ -43,16 +55,6 @@ function Page() {
           overlay={i === 0 ? <Hero ref={heroRef} /> : null}
           // The hero lives inside station 1's pin and clears out on its progress.
           onFrame={i === 0 ? (frame) => applyHero(frame.progress, heroRef.current) : undefined}
-          onSettle={
-            i === 0
-              ? () => {
-                  if (heroRef.current) {
-                    heroRef.current.style.opacity = 1;
-                    heroRef.current.style.transform = 'none';
-                  }
-                }
-              : undefined
-          }
         />
       ))}
       <Finale rootRef={finaleRef} onJump={jump} />

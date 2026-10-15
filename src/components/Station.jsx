@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useSection } from '../scroll/useDriver.jsx';
-import { applyStation, settleStation } from '../scroll/timings.js';
+import { applyStation } from '../scroll/timings.js';
 import { useScene } from '../scenes/useScene.js';
 import { RoleCard } from './RoleCard.jsx';
 
@@ -15,9 +15,8 @@ import { RoleCard } from './RoleCard.jsx';
  * @param {boolean} [props.overlap] false only for the first station
  * @param {React.ReactNode} [props.overlay] hero or other absolutely-placed content
  * @param {(frame: object, stage: HTMLElement|null) => void} [props.onFrame]
- * @param {() => void} [props.onSettle]
  */
-export function Station({ station, rootRef, overlap = true, overlay, onFrame, onSettle }) {
+export function Station({ station, rootRef, overlap = true, overlay, onFrame }) {
   const stageRef = useRef(null);
   const cardRef = useRef(null);
   const hostRef = useRef(null);
@@ -35,12 +34,6 @@ export function Station({ station, rootRef, overlap = true, overlay, onFrame, on
       // costs exactly as much as drawing a visible one.
       if (opacity > 0.01) sceneRef.current?.frame(frame.progress, frame.now);
       onFrame?.(frame, stageRef.current);
-    },
-    () => {
-      // Reduced motion leaves the scene undrawn on purpose — step 6 replaces
-      // the whole stage with the stacked-document fallback.
-      settleStation(stageRef.current, cardRef.current);
-      onSettle?.();
     }
   );
 
