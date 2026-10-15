@@ -12,7 +12,7 @@ export default function App() {
   const fallback = useFallbackMode();
   return (
     <>
-      <a className="skip-link" href="/resume">
+      <a className="skip-link" href="resume/">
         Skip to the plain-text résumé
       </a>
       {fallback ? (

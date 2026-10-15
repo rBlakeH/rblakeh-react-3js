@@ -6,6 +6,9 @@
 // vite.config.js) rather than rendered by React, so the text is in the file a
 // crawler fetches, not in a bundle it has to execute.
 //
+// Links here are relative, because the site has to work both at a domain root
+// and under a GitHub Pages project subpath.
+//
 // Source of truth is src/data/stations.js — nothing here restates copy. The
 // one presentational liberty is order: a résumé reads newest-first, while the
 // journey reads oldest-first.
@@ -53,7 +56,6 @@ export function renderResume() {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(hero.name)} — résumé</title>
 <meta name="description" content="${esc(hero.role)}. ${esc(finale.paragraph)}">
-<link rel="canonical" href="/resume">
 <style>
   :root { color-scheme: light; }
   body {
@@ -135,7 +137,7 @@ ${finale.credits.map((c) => `    <li>${esc(c)}</li>`).join('\n')}
 </section>
 
 <footer>
-  <a href="/">Back to the scroll-driven version</a>
+  <a href="../">Back to the scroll-driven version</a>
 </footer>
 
 </body>
