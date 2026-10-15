@@ -1,53 +1,63 @@
-import { useEffect, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
-import Experience from './three/Experience.jsx';
-import Overlays from './ui/Overlays.jsx';
-import { SCENE, THEMES } from './data/scenes.js';
+import React, { createRef, useCallback, useMemo, useRef } from 'react';
+import { stations } from './data/stations.js';
+import { ScrollDriverProvider } from './scroll/useDriver.jsx';
+import { applyHero } from './scroll/timings.js';
+import { Hero } from './components/Hero.jsx';
+import { Station } from './components/Station.jsx';
+import { Finale } from './components/Finale.jsx';
+import { useFallbackMode } from './fallback/useFallbackMode.js';
+import { FallbackDocument } from './fallback/FallbackDocument.jsx';
 
-/**
- * App
- * ---
- * Owns the single source of scroll state (`progress`, a ref in 0..1) and shares
- * it with both the 3D layer (<Experience>) and the DOM overlays (<Overlays>).
- * A ref — not React state — so per-frame scroll updates never re-render React;
- * the 3D loop and the overlay loop read `progress.current` directly.
- *
- * Layout: a fixed full-screen <Canvas> behind fixed DOM overlays, with a tall
- * `.scroll-track` element creating the scrollable height that drives `progress`.
- */
 export default function App() {
-  const progress = useRef(0);
+  const fallback = useFallbackMode();
+  return (
+    <>
+      <a className="skip-link" href="resume/">
+        Skip to the plain-text résumé
+      </a>
+      {fallback ? (
+        <FallbackDocument />
+      ) : (
+        <ScrollDriverProvider>
+          <Page />
+        </ScrollDriverProvider>
+      )}
+    </>
+  );
+}
 
-  useEffect(() => {
-    // Paint the page background to match the active sky theme.
-    document.body.style.background = THEMES[SCENE.theme].bg;
+function Page() {
+  // App owns the section refs: the finale's route strip scrolls to them.
+  const trackRefs = useMemo(() => stations.map(() => createRef()), []);
+  const finaleRef = useRef(null);
+  const heroRef = useRef(null);
 
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      progress.current = max > 0 ? window.scrollY / max : 0;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const jump = useCallback(
+    (i) => {
+      const t = trackRefs[i]?.current;
+      if (!t) return;
+      const se = document.scrollingElement || document.documentElement;
+      const top =
+        t.getBoundingClientRect().top + se.scrollTop + (t.offsetHeight - window.innerHeight) * 0.55;
+      window.scrollTo({ top, behavior: 'smooth' });
+    },
+    [trackRefs]
+  );
 
   return (
     <>
-      <Canvas
-        className="scene-canvas"
-        style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1 }}
-        shadows
-        dpr={[1, 2]}
-        gl={{ alpha: true, antialias: true }}
-        camera={{ fov: 46, near: 0.1, far: 220, position: [0, 4.6, 26] }}
-      >
-        <Experience progress={progress} config={SCENE} />
-      </Canvas>
-
-      <Overlays progress={progress} config={SCENE} />
-
-      {/* Empty element whose height generates the scroll range. */}
-      <div className="scroll-track" />
+      {stations.map((station, i) => (
+        <Station
+          key={station.id}
+          station={station}
+          rootRef={trackRefs[i]}
+          overlap={i > 0}
+          overlay={i === 0 ? <Hero ref={heroRef} /> : null}
+          // The hero lives inside station 1's pin and clears out on its progress.
+          onFrame={i === 0 ? (frame) => applyHero(frame.progress, heroRef.current) : undefined}
+        />
+      ))}
+      <Finale rootRef={finaleRef} onJump={jump} />
     </>
   );
 }
